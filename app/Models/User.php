@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'address', // Add address field
+        'contact_number', // Add contact_number field
+        'dob', // Add dob field
     ];
 
     /**
