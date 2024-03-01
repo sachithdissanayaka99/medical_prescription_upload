@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +29,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::middleware('auth')->group(function () {
+
+    Route::resource('prescriptions',PrescriptionController::class);
+
+    // Route::get('/prescriptions/create',[PrescriptionController::class,'create'])->name('prescriptions.create');
+    // Route::post('/prescriptions/create',[PrescriptionController::class,'store'])->name('prescriptions.store');
+
+
+});
+
+
+require __DIR__ . '/auth.php';

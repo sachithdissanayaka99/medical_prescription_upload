@@ -11,18 +11,21 @@ class StorePrescriptionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     *  @return array<string, mixed>
      */
     public function rules(): array
     {
         return [
-            //
+            'delivery_address' => 'required|string|max:255',
+            'attachment' => 'required|array|max:5',
+            'attachment.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
+            'notes' => 'nullable|string',
         ];
     }
 }
