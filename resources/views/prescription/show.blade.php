@@ -1,13 +1,17 @@
 <x-app-layout>
-    <div class="w-3/4 mx-auto text-center" style="margin-top: 100px; margin-bottom: 100px;">
+    <div class="w-3/4 mx-auto text-center" style="margin-top: 20px;">
         <!-- Set width to 75%, center it, and center all items -->
         <h1 class="text-black text-lg font-bold">Prescription Id : {{ $prescription->id }}</h1>
-        <div class="max-w-3/4 lg:max-w-4/5 mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
+        <div
+            class="max-w-3/4 lg:max-w-4/5 mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg"
+            
+            >
             <div>
                 @if (!auth()->user()->isAdmin())
                     <div>
                         <a href="{{ route('prescriptions.show', $prescription->id) }}">
-                            <div class="max-w-3/4 lg:max-w-4/5" style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+                            <div class="max-w-3/4 lg:max-w-4/5"
+                                style="margin-bottom: 10px; display: flex; justify-content: space-between;">
                                 <p style="margin: 10px; padding: 10px;">Delivery Address :
                                     {{ $prescription->delivery_address }}</p>
                                 <p style="margin: 10px; padding: 10px; color:blue;">
@@ -15,7 +19,8 @@
                             </div>
                         </a>
 
-                        <div class="max-w-3/4 lg:max-w-4/5" style="margin: 20px; display: flex; justify-content: space-between;">
+                        <div class="max-w-3/4 lg:max-w-4/5"
+                            style="margin: 20px; display: flex; justify-content: space-between;">
                             <a href="{{ $prescription->attachment }}">Attachments :</a>
                             <div>
                                 @foreach (json_decode($prescription->attachment, true) as $image)
@@ -95,33 +100,40 @@
                         </div>
                     </div>
                     <div class="text-right mt-4">
-                        <x-primary-button>Send Quotation</x-primary-button>
+
+                        <form action="{{ route('prescriptions.update', $prescription->id) }}" method="post">
+                            @csrf
+                            @method('patch')
+                            <input type="hidden" name="status" value="approved" />
+                            <x-primary-button>Send Quotation</x-primary-button>
+                        </form>
                         
+
                     </div>
                 @endif
 
                 <br>
 
                 <div class="flex justify-between">
-                    <div class="flex">
-                        <a href="{{ route('prescriptions.edit', $prescription->id) }}">
-                            <x-primary-button>Edit</x-primary-button>
-                        </a>
-                        <form class="ml-2" action="{{ route('prescriptions.destroy', $prescription->id) }}"
-                            method="post">
-                            @method('delete')
-                            @csrf
-                            <x-primary-button>Delete</x-primary-button>
-                        </form>
-                    </div>
-                    @if (auth()->user()->isAdmin())
+
+                    @if (!(auth()->user()->isAdmin()))
                         <div class="flex">
-                            <form action="{{ route('prescriptions.update', $prescription->id) }}" method="post">
+                            <a href="{{ route('prescriptions.edit', $prescription->id) }}">
+                                <x-primary-button>Edit</x-primary-button>
+                            </a>
+                            <form class="ml-2" action="{{ route('prescriptions.destroy', $prescription->id) }}"
+                                method="post">
+                                @method('delete')
                                 @csrf
-                                @method('patch')
-                                <input type="hidden" name="status" value="resolved" />
-                                <x-primary-button>Resolve</x-primary-button>
+                                <x-primary-button>Delete</x-primary-button>
                             </form>
+                        </div>
+                    @endif
+
+
+                    @if ((auth()->user()->isAdmin()))
+                        <div class="flex">
+                            
                             <form action="{{ route('prescriptions.update', $prescription->id) }}" method="post">
                                 @csrf
                                 @method('patch')
@@ -130,7 +142,8 @@
                             </form>
                         </div>
                     @else
-                        <p class="text-white">Status: {{ $prescription->status }} </p>
+
+                        <p class="text-black">Status: {{ $prescription->status }} </p>
                     @endif
                 </div>
             </div>

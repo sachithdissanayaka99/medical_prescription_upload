@@ -14,6 +14,7 @@ class Prescription extends Model
         'notes',
         'attachment', 
         'user_id',
+        'status',
     ];
 }
 

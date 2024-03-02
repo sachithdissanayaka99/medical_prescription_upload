@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\User;
 
 use App\Http\Requests\StorePrescriptionRequest;
 use App\Http\Requests\UpdatePrescriptionRequest;
 use App\Models\Prescription;
+use App\Notifications\PlaceOrderNotification;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -103,6 +105,15 @@ class PrescriptionController extends Controller
     public function update(UpdatePrescriptionRequest $request, Prescription $prescription)
     {
         $prescription->update($request->validated());
+
+        if ($request->has('status')) {
+            $user = User:: find($prescription->user_id);
+            // $user->notify(new PlaceOrderNotification($prescription));
+
+            return (new PlaceOrderNotification($prescription))->toMail($user);
+            
+        }
+
 
 
         return redirect()->route('prescriptions.index');
