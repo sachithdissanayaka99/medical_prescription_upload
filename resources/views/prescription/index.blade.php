@@ -25,7 +25,20 @@
 
                     <div class="max-w-3/4 lg:max-w-4/5"
                         style="margin-bottom: 10px; display: flex; justify-content: space-between;">
-                        <p> </p>
+                        <div>
+                            @if ($prescription->status == 'approved')
+                                <p class="text-black" style="margin-left: 10px; padding-left: 10px; color:blue;">Order
+                                    Accepted</p>
+                            @elseif ($prescription->status == 'rejected')
+                                <p class="text-black" style="margin-left: 10px; padding-left: 10px; color:blue;">Order
+                                    Reject</p>
+                            @else
+                                <p class="text-black" style="margin-left: 10px; padding-left: 10px; color:blue;">Order
+                                    Pending</p>
+                            @endif
+
+                        </div>
+
                         <p style="margin-right: 10px; padding-rigth: 10px; color:blue;">
                             {{ $prescription->created_at->diffForHumans() }}</p>
 

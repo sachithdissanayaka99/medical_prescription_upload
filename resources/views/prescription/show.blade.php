@@ -1,12 +1,12 @@
 <x-app-layout>
-    <div class="w-3/4 mx-auto text-center" style="margin-top: 20px;">
-        <!-- Set width to 75%, center it, and center all items -->
+    <div class="w-3/4 mx-auto text-center" style="margin-top: 10px;">
+
         <h1 class="text-black text-lg font-bold">Prescription Id : {{ $prescription->id }}</h1>
         <div
-            class="max-w-3/4 lg:max-w-4/5 mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg"
-            
-            >
+            class="max-w-3/4 lg:max-w-4/5 mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
             <div>
+
+
                 @if (!auth()->user()->isAdmin())
                     <div>
                         <a href="{{ route('prescriptions.show', $prescription->id) }}">
@@ -38,15 +38,14 @@
                     <div class="flex justify-between">
                         <div
                             style="background-color: grey; width: 45%; padding: 20px; height: 500px; border-right: 2px solid black; overflow-y: auto;">
-                            <!-- Content for the first section -->
+
                             <div style="height: 80%; border-bottom: 2px solid black;">
                                 <div id="previewImage" style="width: 100%; height: 100%; overflow: hidden;"></div>
-                                <!-- Container to display the preview image -->
+
                             </div>
                             <div style="height: 20%; display: flex; align-items: center;">
                                 @foreach (json_decode($prescription->attachment, true) as $image)
                                     @if (!empty($image))
-                                        <!-- Trigger JavaScript function to display image in top section -->
                                         <a href="javascript:void(0);" onclick="displayImage('{{ $image }}')">
                                             <img src="/storage/{{ $image }}" alt="attachment" class="w-20 h-20"
                                                 style="margin-right: 10px;">
@@ -56,9 +55,9 @@
                             </div>
                         </div>
                         <div style="background-color: grey; width: 55%; padding: 20px;">
-                            <!-- Content for the second section -->
+
                             <div style="height: 60%; border-bottom: 2px solid black; overflow-y: auto;">
-                                <!-- Table of drugs, quantity, and amount -->
+
                                 <table id="drugTable" style="width: 100%; border-collapse: collapse;">
                                     <thead>
                                         <tr style="border-bottom: 1px solid black;">
@@ -69,17 +68,15 @@
                                     </thead>
                                     <tbody id="drugList">
                                         <tr style="border-bottom: 1px solid black;">
-                                            {{-- <td style="border: 1px solid black; padding: 8px;">Drug 1</td>
-                                            <td style="border: 1px solid black; padding: 8px;">10</td>
-                                            <td style="border: 1px solid black; padding: 8px;">$100</td> --}}
+
                                         </tr>
-                                        <!-- Add more rows if needed -->
+
                                     </tbody>
                                 </table>
                             </div>
                             <div
                                 style="height: 40%; display: flex; flex-direction: column; justify-content: space-between;">
-                                <!-- Input fields for drug and quantity -->
+
                                 <div>
                                     <br>
                                     <label for="drug" style="margin-bottom: 10px;">Drug:</label>
@@ -89,12 +86,12 @@
                                     <input type="text" id="quantity" placeholder="Quantity"
                                         style="margin-bottom: 10px; border: 1px solid black; padding: 5px;">
                                 </div>
-                                <!-- Add button -->
+
                                 <div class="display-flex">
                                     <button id="addButton"
                                         style="width: 100px; padding: 10px; background-color: green; color: white; border: none;">Add</button>
                                 </div>
-                                <!-- Display total amount -->
+
                                 <div id="totalAmount" style="padding: 8px; border-top: 1px solid black;"></div>
                             </div>
                         </div>
@@ -107,7 +104,7 @@
                             <input type="hidden" name="status" value="approved" />
                             <x-primary-button>Send Quotation</x-primary-button>
                         </form>
-                        
+
 
                     </div>
                 @endif
@@ -116,7 +113,7 @@
 
                 <div class="flex justify-between">
 
-                    @if (!(auth()->user()->isAdmin()))
+                    @if (!auth()->user()->isAdmin())
                         <div class="flex">
                             <a href="{{ route('prescriptions.edit', $prescription->id) }}">
                                 <x-primary-button>Edit</x-primary-button>
@@ -131,24 +128,88 @@
                     @endif
 
 
-                    @if ((auth()->user()->isAdmin()))
+                    @if (auth()->user()->isAdmin())
                         <div class="flex">
-                            
+
                             <form action="{{ route('prescriptions.update', $prescription->id) }}" method="post">
                                 @csrf
                                 @method('patch')
                                 <input type="hidden" name="status" value="rejected" />
                                 <x-primary-button class="ml-2">Reject</x-primary-button>
                             </form>
+
+
+
+
+
+                        </div>
+
+                        <div>
+                            @if ($prescription->status == 'approved')
+                                <p class="text-black">Order Accepted</p>
+                            @endif
                         </div>
                     @else
-
                         <p class="text-black">Status: {{ $prescription->status }} </p>
                     @endif
                 </div>
             </div>
+
+            @if(!auth()->user()->isAdmin())
+                <br>
+                <hr>
+                <br>
+            @endif
+            
+
+
+            <div class="flex justify-between">
+                @if ($prescription->status != 'pending' && !auth()->user()->isAdmin() && $prescription->status != 'rejected')
+                    <table style="border-collapse: collapse; border: 1px solid black;">
+                        <tr>
+                            <th style="border: 1px solid black; padding: 8px;">Drug</th>
+                            <th style="border: 1px solid black; padding: 8px;">Quantity</th>
+                            <th style="border: 1px solid black; padding: 8px;">Amount</th>
+
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black; padding: 8px;">{{ $prescription->table_value }}</td>
+                            <td style="border: 1px solid black; padding: 8px;">{{ $prescription->table_value }}</td>
+                            <td style="border: 1px solid black; padding: 8px;">{{ $prescription->table_value }}</td>
+                        </tr>
+                    </table>
+
+                    <form method="POST">
+                        @csrf
+                        <input type="hidden" name="prescription_id" value="{{ $prescription->id }}">
+                        <button type="submit"
+                            style="background-color: green; color: white; padding: 6px 12px; border: none; cursor: pointer;">Accept</button>
+                    </form>
+                    <form method="POST">
+                        @csrf
+                        <input type="hidden" name="prescription_id" value="{{ $prescription->id }}">
+                        <button type="submit"
+                            style="background-color: red; color: white; padding: 6px 12px; border: none; cursor: pointer;">Reject</button>
+                    </form>
+                @endif
+            </div>
+
+
         </div>
+
+
     </div>
+
+
+
+
+
+
+
+
+
+
+
 
     <script>
         function displayImage(imageUrl) {
@@ -184,5 +245,70 @@
             document.getElementById("totalAmount").innerHTML = "Total Amount: $" + totalAmount;
         });
     </script>
+
+<script>
+    let drugs = []; // Array to store drug data
+
+    function addDrug() {
+        const drug = document.getElementById("drug").value;
+        const quantity = document.getElementById("quantity").value;
+        if (drug && quantity) {
+            drugs.push({ drug, quantity });
+            updateTable();
+            document.getElementById("drug").value = "";
+            document.getElementById("quantity").value = "";
+        } else {
+            alert("Please enter drug and quantity.");
+        }
+    }
+
+    function updateTable() {
+        const tableBody = document.getElementById("drugList");
+        tableBody.innerHTML = "";
+        drugs.forEach(drug => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td style="border: 1px solid black; padding: 8px;">${drug.drug}</td>
+                <td style="border: 1px solid black; padding: 8px;">${drug.quantity}</td>
+                <td style="border: 1px solid black; padding: 8px;">${calculateAmount(drug.quantity)}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+        updateTotalAmount();
+    }
+
+    function calculateAmount(quantity) {
+        // Implement your logic to calculate amount based on quantity
+        // For example:
+        return parseFloat(quantity) * 10; // Assuming each drug costs 10
+    }
+
+    function updateTotalAmount() {
+        const totalAmountElement = document.getElementById("totalAmount");
+        const totalAmount = drugs.reduce((total, drug) => total + calculateAmount(drug.quantity), 0);
+        totalAmountElement.innerText = `Total Amount: ${totalAmount}`;
+    }
+
+    function submitForm() {
+        const totalAmount = drugs.reduce((total, drug) => total + calculateAmount(drug.quantity), 0);
+        const data = {
+            drugs,
+            totalAmount
+        };
+        // Assuming you're using fetch API to send data to the backend
+        fetch('/savePrescription', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            // Handle response
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
 
 </x-app-layout>
