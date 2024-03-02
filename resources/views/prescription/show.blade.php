@@ -165,19 +165,7 @@
 
             <div class="flex justify-between">
                 @if ($prescription->status != 'pending' && !auth()->user()->isAdmin() && $prescription->status != 'rejected')
-                    <table style="border-collapse: collapse; border: 1px solid black;">
-                        <tr>
-                            <th style="border: 1px solid black; padding: 8px;">Drug</th>
-                            <th style="border: 1px solid black; padding: 8px;">Quantity</th>
-                            <th style="border: 1px solid black; padding: 8px;">Amount</th>
-
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid black; padding: 8px;">{{ $prescription->table_value }}</td>
-                            <td style="border: 1px solid black; padding: 8px;">{{ $prescription->table_value }}</td>
-                            <td style="border: 1px solid black; padding: 8px;">{{ $prescription->table_value }}</td>
-                        </tr>
-                    </table>
+                    <p>Total Amount : $1110</p>
 
                     <form method="POST">
                         @csrf
@@ -245,70 +233,5 @@
             document.getElementById("totalAmount").innerHTML = "Total Amount: $" + totalAmount;
         });
     </script>
-
-<script>
-    let drugs = []; // Array to store drug data
-
-    function addDrug() {
-        const drug = document.getElementById("drug").value;
-        const quantity = document.getElementById("quantity").value;
-        if (drug && quantity) {
-            drugs.push({ drug, quantity });
-            updateTable();
-            document.getElementById("drug").value = "";
-            document.getElementById("quantity").value = "";
-        } else {
-            alert("Please enter drug and quantity.");
-        }
-    }
-
-    function updateTable() {
-        const tableBody = document.getElementById("drugList");
-        tableBody.innerHTML = "";
-        drugs.forEach(drug => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td style="border: 1px solid black; padding: 8px;">${drug.drug}</td>
-                <td style="border: 1px solid black; padding: 8px;">${drug.quantity}</td>
-                <td style="border: 1px solid black; padding: 8px;">${calculateAmount(drug.quantity)}</td>
-            `;
-            tableBody.appendChild(row);
-        });
-        updateTotalAmount();
-    }
-
-    function calculateAmount(quantity) {
-        // Implement your logic to calculate amount based on quantity
-        // For example:
-        return parseFloat(quantity) * 10; // Assuming each drug costs 10
-    }
-
-    function updateTotalAmount() {
-        const totalAmountElement = document.getElementById("totalAmount");
-        const totalAmount = drugs.reduce((total, drug) => total + calculateAmount(drug.quantity), 0);
-        totalAmountElement.innerText = `Total Amount: ${totalAmount}`;
-    }
-
-    function submitForm() {
-        const totalAmount = drugs.reduce((total, drug) => total + calculateAmount(drug.quantity), 0);
-        const data = {
-            drugs,
-            totalAmount
-        };
-        // Assuming you're using fetch API to send data to the backend
-        fetch('/savePrescription', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => {
-            // Handle response
-        }).catch(error => {
-            console.error('Error:', error);
-        });
-    }
-</script>
-
 
 </x-app-layout>

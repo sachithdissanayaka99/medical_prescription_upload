@@ -29,6 +29,9 @@ class UpdatePrescriptionRequest extends FormRequest
             'attachment.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
             'status'      => ['string', Rule::in(array_column(Prescription_status::cases(), 'value'))],
             'notes' => 'nullable|string',
+            'total_amount' => 'numeric|min:0',
+            
         ];
+
     }
 }

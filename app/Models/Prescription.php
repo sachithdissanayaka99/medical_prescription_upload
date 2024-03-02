@@ -15,6 +15,7 @@ class Prescription extends Model
         'attachment', 
         'user_id',
         'status',
+        'total_amount',
     ];
 }
 
