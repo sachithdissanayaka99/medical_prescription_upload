@@ -51,4 +51,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Prescription::class);
     }
+
+    /**
+     * Check if the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        $admins = ['sachithdissanayaka1357@gmail.com'];
+        return in_array($this->email, $admins);
+    }
+
 }

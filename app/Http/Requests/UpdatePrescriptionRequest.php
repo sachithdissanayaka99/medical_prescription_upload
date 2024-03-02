@@ -11,7 +11,7 @@ class UpdatePrescriptionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,10 @@ class UpdatePrescriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'delivery_address' => 'required|string|max:255',
+            'attachment' => 'required|array|max:5',
+            'attachment.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', 
+            'notes' => 'nullable|string',
         ];
     }
 }

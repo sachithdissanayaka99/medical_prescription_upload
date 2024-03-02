@@ -7,6 +7,7 @@ use App\Http\Requests\UpdatePrescriptionRequest;
 use App\Models\Prescription;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 
 class PrescriptionController extends Controller
@@ -16,17 +17,14 @@ class PrescriptionController extends Controller
      */
     public function index()
     {
-        // Retrieve the authenticated user
-        $user = auth()->user();
-
-        // Assuming there's a relationship between User and Prescription models
-        // Fetch all prescriptions associated with the user, ordered by the latest
-        $prescriptions = $user->prescriptions()->latest()->get();
-
-        // dd($prescriptions[0]);
-
-        // Pass the prescriptions to the view
-        return view('prescription.index', compact('prescriptions'));
+        if (auth()->user()->isAdmin()) {
+            $prescriptions = Prescription::all(); // Fetch all prescriptions
+            return view('prescription.index', compact('prescriptions'));
+        } else {
+            $user = Auth::user(); // Get the currently authenticated user
+            $prescriptions = $user->prescriptions()->latest()->get(); // Fetch prescriptions for the current user
+            return view('prescription.index', compact('prescriptions'));
+        }
     }
 
 
@@ -83,6 +81,12 @@ class PrescriptionController extends Controller
     {
 
 
+
+
+
+
+        return view('prescription.show', compact('prescription'));
+
     }
 
     /**
@@ -90,7 +94,7 @@ class PrescriptionController extends Controller
      */
     public function edit(Prescription $prescription)
     {
-        //
+        return view('prescription.edit', compact('prescription'));
     }
 
     /**
@@ -98,8 +102,12 @@ class PrescriptionController extends Controller
      */
     public function update(UpdatePrescriptionRequest $request, Prescription $prescription)
     {
-        //
+        $prescription->update($request->validated());
+
+
+        return redirect()->route('prescriptions.index');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -108,7 +116,7 @@ class PrescriptionController extends Controller
     {
         $prescription->delete();
         return redirect(route('prescriptions.index'));
-      
+
     }
 
 

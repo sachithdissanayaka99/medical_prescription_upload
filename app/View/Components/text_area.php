@@ -7,13 +7,18 @@ use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class text_area extends Component
+
+
 {
     /**
      * Create a new component instance.
      */
-    public function __construct()
+
+    public $value = '';
+
+    public function __construct($value)
     {
-        //
+        $this->value = $value;
     }
 
     /**
